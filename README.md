@@ -12,8 +12,7 @@
 
 * 实现了`springboot` demo
 * 当前容器能够复现`demo`
-
-
+* ~~目前还没有用到`dockerfile`~~
 
 使用方式：
 
