@@ -1,0 +1,15 @@
+version: "3"
+services:
+  web:
+    container_name: my-demo
+    restart: always
+    image: openjdk
+    volumes:
+      - ./my.jar:/my.jar
+      - ./logs:/logs
+      - /etc/localtime:/etc/localtime
+    ports:
+      - "8000:8000"
+    environment:
+      - TZ="Asia/Shanghai"
+    entrypoint: java -server -Xms256m -Xmx256m -jar -Dserver.port=8000 -Dspring.profiles.active=local my.jar
