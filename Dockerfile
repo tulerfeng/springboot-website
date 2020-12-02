@@ -1,5 +1,7 @@
-FROM java
-MAINTAINER xiabee
-
-COPY ./myapp.jar /app.jar
-ENTRYPOINT [ "java","-agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar" ]
+FROM openjdk
+ARG workdir=/app
+VOLUME ${workdir}
+WORKDIR ${workdir}
+ADD test.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","app.jar"]

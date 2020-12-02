@@ -1,15 +1,33 @@
-version: "3"
+version: '2'
 services:
-  web:
-    container_name: my-demo
-    restart: always
-    image: openjdk
-    volumes:
-      - ./my.jar:/my.jar
-      - ./logs:/logs
-      - /etc/localtime:/etc/localtime
+  proxy:
+  # 这里使用 nginx 作反向代理，配置负载均衡
+    image: nginx:latest
     ports:
-      - "8000:8000"
-    environment:
-      - TZ="Asia/Shanghai"
-    entrypoint: java -server -Xms256m -Xmx256m -jar -Dserver.port=8000 -Dspring.profiles.active=local my.jar
+      - 80:80
+    privileged: true
+    # 权限控制
+    restart: always
+    volumes:
+    # 文件映射
+      - ./nginx/conf/default.conf:/etc/nginx/conf.d/default.conf  # 覆盖原有conf
+      # - ./nginx/conf/keys:/etc/nginx/keys # 证书信息
+      # - ./nginx/conf/conf.d:/etc/nginx/conf.d
+      # - ./nginx/www:/usr/share/nginx/html # 静态目录文件
+      # - ./nginx/logs:/var/log/nginx
+  cache:
+  # 使用redis做缓存数据库，提高访问效率
+    image: redis:latest
+    privileged: true
+    restart: always
+    ports:
+      - 6379:6379
+    # volumes:
+      # - ./redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      # - ./redis/data:/data
+  
+  cms:
+  # 网站主体
+    build: .
+    image: spring-boot-xiabee
+    restart: always
